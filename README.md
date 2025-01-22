@@ -5,78 +5,59 @@
 2. **Security Group** with necessary inbound and outbound rules.
 3. **SSH Key** for accessing the EC2 instance.
 
----
+Install Jenkins, configure Docker as agent, set up cicd, deploy applications to k8s and much more.
 
-## Step 1: Launch an EC2 Instance
-1. Log in to AWS Management Console.
-2. Navigate to the **EC2 Dashboard** and launch a new instance.
-3. Choose an **Ubuntu 20.04+** or **Amazon Linux 2** AMI.
-4. Select an instance type (e.g., t2.micro for testing).
-5. Create or configure a **security group** with the following inbound rules:
-   - **SSH (port 22)** for remote access.
-   - **HTTP (port 80)** for Jenkins web interface.
-   - **Custom TCP Rule (port 8080)** for Jenkins.
-6. Attach an SSH key pair to the instance.
+## AWS EC2 Instance
+
+- Go to AWS Console
+- Instances(running)
+- Launch instances
+
+<img width="994" alt="Screenshot 2023-02-01 at 12 37 45 PM" src="https://user-images.githubusercontent.com/43399466/215974891-196abfe9-ace0-407b-abd2-adcffe218e3f.png">
+
+### Install Jenkins.
+
+Pre-Requisites:
+ - Java (JDK)
+
+### Run the below commands to install Java and Jenkins
+
+Install Java
+
+```
+sudo apt update
+sudo apt install openjdk-17-jre
+```
+
+Verify Java is Installed
+
+```
+java -version
+```
+
+Now, you can proceed with installing Jenkins
+
+```
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+```
+
+**Note: ** By default, Jenkins will not be accessible to the external world due to the inbound traffic restriction by AWS. Open port 8080 in the inbound traffic rules as show below.
+
+- EC2 > Instances > Click on <Instance-ID>
+- In the bottom tabs -> Click on Security
+- Security groups
+- Add inbound traffic rules as shown in the image (you can just allow TCP 8080 as well, in my case, I allowed `All traffic`).
 
 <img width="1187" alt="Screenshot 2023-02-01 at 12 42 01 PM" src="https://user-images.githubusercontent.com/43399466/215975712-2fc569cb-9d76-49b4-9345-d8b62187aa22.png">
 
 
----
-
-## Step 2: SSH into the EC2 Instance
-Once the EC2 instance is running, SSH into it:
-
-ssh -i /path/to/your-key.pem ubuntu@<your-ec2-public-ip>
-```
-
----
-
-## Step 3: Install Jenkins
-### 3.1 Update System Packages
-```bash
-sudo apt update
-sudo apt upgrade -y
-```
-### 3.2 Install Java
-Jenkins requires Java. Install the OpenJDK package:
-```bash
-sudo apt install openjdk-11-jre -y
-```
-
-Verify Java installation:
-```bash
-java -version
-```
-
-### 3.3 Add Jenkins Repository and Import KeyInstall Jenkins
-
-1. Update the package index and install Jenkins:
-   ```bash
-      sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
-      https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-   
-      echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
-      https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-      /etc/apt/sources.list.d/jenkins.list > /dev/null
-   
-      sudo apt-get update
-      sudo apt-get install jenkins
-   ```
-
-2. Start and enable the Jenkins service:
-   ```bash
-   sudo systemctl start jenkins
-   sudo systemctl enable jenkins
-   ```
-
-3. Check the Jenkins service status:
-   ```bash
-   sudo systemctl status jenkins
-   ```
-
----
-
-## Step 4 Login to Jenkins using the below URL:
+### Login to Jenkins using the below URL:
 
 http://<ec2-instance-public-ip-address>:8080    [You can get the ec2-instance-public-ip-address from your AWS EC2 console page]
 
@@ -105,6 +86,18 @@ Create First Admin User or Skip the step [If you want to use this Jenkins instan
 Jenkins Installation is Successful. You can now starting using the Jenkins 
 
 <img width="990" alt="Screenshot 2023-02-01 at 11 14 13 AM" src="https://user-images.githubusercontent.com/43399466/215961440-3f13f82b-61a2-4117-88bc-0da265a67fa7.png">
+
+## Install the Docker Pipeline plugin in Jenkins:
+
+   - Log in to Jenkins.
+   - Go to Manage Jenkins > Manage Plugins.
+   - In the Available tab, search for "Docker Pipeline".
+   - Select the plugin and click the Install button.
+   - Restart Jenkins after the plugin is installed.
+   
+<img width="1392" alt="Screenshot 2023-02-01 at 12 17 02 PM" src="https://user-images.githubusercontent.com/43399466/215973898-7c366525-15db-4876-bd71-49522ecb267d.png">
+
+Wait for the Jenkins to be restarted.
 
 ## Install the Docker Pipeline plugin in Jenkins:
 
