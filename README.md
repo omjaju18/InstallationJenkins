@@ -37,13 +37,7 @@ ssh -i /path/to/your-key.pem ubuntu@<your-ec2-public-ip>
 sudo apt update
 sudo apt upgrade -y
 ```
-
-### 3.2 Add Jenkins Repository and Import Key
-```bash
-
-```
-
-### 3.3 Install Java
+### 3.2 Install Java
 Jenkins requires Java. Install the OpenJDK package:
 ```bash
 sudo apt install openjdk-11-jre -y
@@ -54,7 +48,8 @@ Verify Java installation:
 java -version
 ```
 
-### 3.4 Install Jenkins
+### 3.3 Add Jenkins Repository and Import KeyInstall Jenkins
+
 1. Update the package index and install Jenkins:
    ```bash
       sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
